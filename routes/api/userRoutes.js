@@ -7,8 +7,9 @@ const {
   getSingleUser,
   createUser,
   deleteUser,
-  addAssignment,
-  removeAssignment,
+  updateUser,
+  addFriend,
+  removeFriend,
 } = require('../../controllers/userController');
 
 // Get returns all users from the db
@@ -17,7 +18,7 @@ router.route('/').get(getUsers).post(createUser);
 
 // GET returns one user specified in params from the db
 // DELETE removes one user specified in params from the db
-router.route('/:userId').get(getSingleUser).delete(deleteUser);
+router.route('/:userId').get(getSingleUser).delete(deleteUser).put(updateUser);
 
 // adds a friend to the friends array that belongs to user 
 // specified from the db
