@@ -1,5 +1,6 @@
 const { ObjectId } = require('bson');
 const { Schema } = require('mongoose');
+const moment = require('moment');
 
 
 const reactionSchema = new Schema(
@@ -19,8 +20,7 @@ const reactionSchema = new Schema(
     },
     createdAt: {
       type: Date,
-      default: Date.now,
-      get: (timestamp) => dateFormat(timestamp),
+      default: moment().format('MMM DD YYYY, h:mm a'),
     },
   },
   {

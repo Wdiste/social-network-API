@@ -3,11 +3,11 @@ const { Thought, User } = require('../models');
 module.exports = {
   getThoughts(req, res) {
     Thought.find({})
+      .populate('reactions')
       .then((thought) => {
-        console.log(thought);
         res.json(thought)
       })
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json(err.message));
   },
   getSingleThought(req, res) {
     Thought.findOne({ _id: req.params.thoughtId })
@@ -17,26 +17,40 @@ module.exports = {
           ? res.status(404).json({ message: 'No thought with that ID' })
           : res.json(thought)
       )
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json(err.message));
   },
   createThought(req, res) {
     Thought.create(req.body)
-      .then((thought) => res.json(thought))
-      .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
-      });
+      .then((thought) =>{ User.findOneAndUpdate(
+        { _id: req.body.userId },
+        { $push: { thoughts: thought._id } },
+        { new: true }
+      )
+        .then((user) => res.json(thought))
+        .catch((err) => {
+          console.log(err);
+          return res.status(500).json(err);
+        });
+      })
   },
   deleteThought(req, res) {
     Thought.findOneAndDelete({ _id: req.params.thoughtId })
-      .then((thought) =>
-        !thought
-          ? res.status(404).json({ message: 'No thought with that ID' })
-          : Reaction.deleteMany({ _id: { $in: thought.reactions } })
-      )
+      .then((thought) =>{
+        if(!thought){
+          throw new Error('No thought with that ID');
+        } else {
+          Thought.reactions.deleteMany({ _id: { $in: thought.reactions } })
+        }
+      })
       .then(() => res.json({ message: 'Thoughts and reactions deleted!' }))
-      .catch((err) => res.status(500).json(err));
-  },
+      .catch((err) => {
+        if(err.message == 'No thought with that ID') {
+          res.status(404).json({ message: err.message });
+        } else {
+          res.status(500).json({ message: err.message }); 
+        }
+      }  
+  )},
   updateThought(req, res) {
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },

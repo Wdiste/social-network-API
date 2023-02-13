@@ -5,6 +5,7 @@ const { User, Thought } = require('../models');
 module.exports = {
   getUsers(req, res) {
     User.find()
+    .populate('thoughts')
       .then(async (users) => {
         return res.json(users);
       })
@@ -32,7 +33,6 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   deleteUser(req, res) {
-    
     User.findOneAndRemove({ _id: req.params.userId })
       .then((user) => {
         if(!user){

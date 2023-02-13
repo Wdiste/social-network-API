@@ -1,9 +1,7 @@
 const { isEmail } = require('validator');
 
-const { Schema, model, ObjectId } = require('mongoose');
-const thoughtSchema = require('./Thought');
+const { Schema, model} = require('mongoose');
 
-// Schema to create Student model
 const userSchema = new Schema(
   {
     username: {
@@ -20,12 +18,14 @@ const userSchema = new Schema(
     },
     thoughts: [
       { 
-        thought_id: ObjectId,
+        type: Schema.Types.ObjectId,
+        ref: 'Thought'
       }
     ],
     friends: [
       { 
-        user_id :  ObjectId,
+        type:  Schema.Types.ObjectId,
+        ref: 'User'
       }
     ]
   },
