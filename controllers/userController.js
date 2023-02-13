@@ -32,15 +32,19 @@ module.exports = {
       .catch((err) => res.status(500).json(err));
   },
   deleteUser(req, res) {
+    
     User.findOneAndRemove({ _id: req.params.userId })
-      .then((user) =>
-        !user
-          ? res.status(404).json({ message: 'No such user exists' })
-          : Course.findOneAndUpdate(
-              { users: req.params.userId },
-              { $pull: { users: req.params.userId } },
-              { new: true }
-            )
+      .then((user) => {
+        if(!user){
+          throw new Error('No such user exists');
+        } else {
+          Thought.updateMany(
+            { users: req.params.userId },
+            { $pull: { users: req.params.userId } },
+            { new: true }
+          )
+        }
+      }
       )
       .then((thought) =>
         !thought
@@ -48,10 +52,12 @@ module.exports = {
               message: 'user deleted, but no thoughts found',
             })
           : res.json({ message: 'user successfully deleted' })
-      )
+          )
       .catch((err) => {
-        console.log(err);
-        res.status(500).json(err);
+        if(err.message == 'No such user exists' ) {
+          res.status(404).json({ message: err.message });
+        } else {
+        res.status(500).json({ message: err.message });}
       });
   },
   updateUser(req, res) {
