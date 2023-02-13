@@ -57,8 +57,24 @@ module.exports = {
   // =======  reaction controllers  ========================================
   // =====================================================================
 
+  getReactions(req, res) {
+    Thought.find({ function (err, data) { return this.reactions } })
+      .then((reaction) => {
+        console.log(reaction);
+        res.json(reaction)
+      })
+      .catch((err) => res.status(500).json(err));
+  },
+  getSingleReaction(req, res) {
+    Thought.findById({ _id: req.params.id, function (err, data) { return this.reactions } })
+      .then((reaction) => {
+        console.log(reaction);
+        res.json(reaction)
+      })
+      .catch((err) => res.status(500).json(err));
+  },
   addReaction(req, res) {
-    console.log('You are adding an reaction');
+    console.log('You are adding a reaction');
     console.log(req.body);
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },

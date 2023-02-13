@@ -1,4 +1,6 @@
 const { ObjectId } = require('bson');
+const { Schema } = require('mongoose');
+
 
 const reactionSchema = new Schema(
   {

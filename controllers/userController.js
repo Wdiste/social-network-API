@@ -3,7 +3,7 @@ const { User, Thought } = require('../models');
 
 
 module.exports = {
-  getUser(req, res) {
+  getUsers(req, res) {
     User.find()
       .then(async (users) => {
         return res.json(users);
@@ -15,7 +15,7 @@ module.exports = {
   },
   getSingleUser(req, res) {
     User.findOne({ _id: req.params.userId })
-      .select('-__v') // this line ignores the verison key from mongod
+      .select('-__v') // this line ignores the verison key from mongodb
       .then(async (user) =>
         !user
           ? res.status(404).json({ message: 'No user with that ID' })
@@ -54,6 +54,20 @@ module.exports = {
         res.status(500).json(err);
       });
   },
+  updateUser(req, res) {
+    User.findOneAndUpdate(
+      { _id: req.params.userId },
+      { $set: req.body },
+      { new: true }
+    )
+      .then((user) =>
+        !user
+          ? res.status(404).json({ message: 'No user with this id!' })
+          : res.json(user)
+      )
+      .catch((err) => res.status(500).json(err));
+  },
+
 
   // =====================================================================
   // =======  friend controllers  ========================================

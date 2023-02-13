@@ -1,6 +1,6 @@
-import { isEmail } from 'validator';
+const { isEmail } = require('validator');
 
-const { Schema, model } = require('mongoose');
+const { Schema, model, ObjectId } = require('mongoose');
 const thoughtSchema = require('./Thought');
 
 // Schema to create Student model
@@ -18,19 +18,28 @@ const userSchema = new Schema(
       max_length: 50,
       validate: [isEmail, 'Invalid email']
     },
-    thoughts: [thoughtSchema],
-    friends: [userSchema]
+    thoughts: [
+      { 
+        thought_id: ObjectId,
+      }
+    ],
+    friends: [
+      { 
+        user_id :  ObjectId,
+      }
+    ]
   },
   {
     toJSON: {
       getters: true,
+      virtuals: true
     },
   }
 );
 
 userSchema
   .virtual('friend count')
-  .get(this.friends.length)
+  .get(function() { return  this.friends.length})
 
 const User = model('user', userSchema);
 
