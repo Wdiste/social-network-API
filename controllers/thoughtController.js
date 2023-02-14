@@ -64,26 +64,25 @@ module.exports = {
   },
 
 
-
   // =====================================================================
   // =======  reaction controllers  ========================================
   // =====================================================================
 
   getReactions(req, res) {
-    Thought.find({ function (err, data) { return this.reactions } })
-      .then((reaction) => {
-        console.log(reaction);
-        res.json(reaction)
+    Thought.findById({ _id: req.params.thoughtId, function (err, data) { return this.reactions } })
+      .then((thought) => {
+        const reactions = thought.reactions;
+        res.json(reactions)
       })
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json(err.message));
   },
   getSingleReaction(req, res) {
-    Thought.findById({ _id: req.params.id, function (err, data) { return this.reactions } })
-      .then((reaction) => {
-        console.log(reaction);
+    Thought.findById({ _id: req.params.thoughtId, function (err, data) { return this.reactions } })
+      .then((thought) => {
+        const reaction = thought.reactions.filter((reactions) => reactions.reactionId == req.params.reactionId)
         res.json(reaction)
       })
-      .catch((err) => res.status(500).json(err));
+      .catch((err) => res.status(500).json(err.message));
   },
   addReaction(req, res) {
     console.log('You are adding a reaction');
@@ -113,7 +112,7 @@ module.exports = {
           ? res
               .status(404)
               .json({ message: 'No thought found with that ID :(' })
-          : res.json(thought)
+          : res.json({ message:'Reaction deleted successfully', thought })
       )
       .catch((err) => res.status(500).json(err));
   },

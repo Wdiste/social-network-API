@@ -32,7 +32,7 @@ router.route('/:thoughtId/reactions')
 
 // GET returns one reaction 
 // DELETE removes one reaction 
-router.route('/:thoughtId/reactions:reactionId')
+router.route('/:thoughtId/reactions/:reactionId')
   .get(getSingleReaction)
   .delete(removeReaction);
 
