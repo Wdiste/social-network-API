@@ -38,9 +38,7 @@ module.exports = {
       .then((thought) =>{
         if(!thought){
           throw new Error('No thought with that ID');
-        } else {
-          Thought.reactions.deleteMany({ _id: { $in: thought.reactions } })
-        }
+        } 
       })
       .then(() => res.json({ message: 'Thoughts and reactions deleted!' }))
       .catch((err) => {
