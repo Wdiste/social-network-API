@@ -9,8 +9,7 @@ module.exports = {
         return res.json(users);
       })
       .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
+        return res.status(500).json(err.message);
       });
   },
   getSingleUser(req, res) {
@@ -22,8 +21,7 @@ module.exports = {
           : res.json({ user })
       )
       .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
+        return res.status(500).json(err.message);
       });
   },
   createUser(req, res) {
@@ -37,17 +35,13 @@ module.exports = {
         if (!user) {
           throw new Error("No such user exists");
         } else {
-          Thought.find({ user: req.params.userId }).then((thoughts) => {
-            if (!thoughts || thoughts.length === 0) {
-              res
-                .status(404)
-                .json({ message: "user deleted, but no thoughts found" });
-            } else {
-              Thought.deleteMany({ userId: req.params.userId }).then(() => {
-                res.json({ message: "user successfully deleted" });
-              });
-            }
-          });
+          const thoughts = user.thoughts;
+          if(thoughts.length == 0){
+            res.json('User deleted but no thoughts found')
+          } else {
+          thoughts.map((thoughtId) => Thought.findByIdAndDelete({ _id: thoughtId}));
+          res.json('User and thoughts deleted');
+          }
         }
       })
       .catch((err) => {
@@ -77,8 +71,6 @@ module.exports = {
   // =====================================================================
 
   addFriend(req, res) {
-    console.log("You are adding an friend");
-    console.log(req.body);
     User.findOneAndUpdate(
       { _id: req.params.userId },
       { $addToSet: { friends: req.body.userId } },

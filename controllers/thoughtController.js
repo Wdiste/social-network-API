@@ -28,8 +28,7 @@ module.exports = {
       )
         .then((user) => res.json(thought))
         .catch((err) => {
-          console.log(err);
-          return res.status(500).json(err);
+          return res.status(500).json(err.message);
         });
       })
   },
@@ -77,16 +76,19 @@ module.exports = {
       .catch((err) => res.status(500).json(err.message));
   },
   getSingleReaction(req, res) {
-    Thought.findById({ _id: req.params.thoughtId, function (err, data) { return this.reactions } })
+    Thought.findById({ _id: req.params.thoughtId})
       .then((thought) => {
-        const reaction = thought.reactions.filter((reactions) => reactions.reactionId == req.params.reactionId)
-        res.json(reaction)
+        const length = thought.reactions.length;
+        for(i = 0; i < length; i++){
+          if(thought.reactions[i]._id == req.params.reactionId) {
+            const reaction = thought.reactions[i];
+            res.status(200).json(reaction);
+          }
+        }
       })
       .catch((err) => res.status(500).json(err.message));
   },
   addReaction(req, res) {
-    console.log('You are adding a reaction');
-    console.log(req.body);
     Thought.findOneAndUpdate(
       { _id: req.params.thoughtId },
       { $addToSet: { reactions: req.body } },
