@@ -31,6 +31,10 @@
 
   Testing this application is easy.  To do so, start the server and open Insomnia or similar program.  Using the routes descried in the application, try all the routes to create, read, update, and destroy data.
 
+  Click the image to view Demo:  
+
+  <a href="https://drive.google.com/file/d/1cgsNIiaL7q7WIFRvG84-Ds7CFHzsLj_7/view"><img src="./assets/18-challenge-demo-thumb.PNG" style="width: 500px; height: 300px;"/></a>
+
   ## Questions/feedback
 
   Please log any issues and check out my projects on Github!  <a href='https://github.com/Wdiste'>Visit Github</a>
